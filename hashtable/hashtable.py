@@ -22,6 +22,8 @@ class HashTable:
 
     def __init__(self, capacity):
         # Your code here
+        self.capacity = capacity
+        self.table = [None] * self.capacity
 
 
     def get_num_slots(self):
@@ -35,7 +37,7 @@ class HashTable:
         Implement this.
         """
         # Your code here
-
+        return self.table
 
     def get_load_factor(self):
         """
@@ -44,6 +46,7 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        pass
 
 
     def fnv1(self, key):
@@ -52,6 +55,28 @@ class HashTable:
 
         Implement this, and/or DJB2.
         """
+        """
+        https://github.com/sup/pyhash/blob/master/pyhash/pyhash.py
+	    Returns: The FNV-1 hash of a given string. 
+	    """
+
+        # Set the offset basis
+        hash = 0x811c9dc5
+
+        # For each character
+        for character in key:
+            # Xor with the current character
+            hash ^= ord(character)
+
+            # Multiply by prime
+            hash *= 0x01000193
+
+            # Clamp
+            hash &= 0xffffffff
+        
+        # Return the final hash as a number
+        return hash
+
 
         # Your code here
 
@@ -61,8 +86,14 @@ class HashTable:
         DJB2 hash, 32-bit
 
         Implement this, and/or FNV-1.
+
+        https://gist.github.com/mengzhuo/180cd6be8ba9e2743753
         """
         # Your code here
+        hash = 5381
+        for x in key:
+            hash = (( hash << 5) + hash) + ord(x)
+        return hash & 0xFFFFFFFF
 
 
     def hash_index(self, key):
@@ -82,7 +113,9 @@ class HashTable:
         Implement this.
         """
         # Your code here
-
+        hashed_key = self.djb2(key)
+        idx = hashed_key % len(self.table)
+        self.table[idx] = value
 
     def delete(self, key):
         """
@@ -93,6 +126,12 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        if key == None:
+            print(f"{key} doesn't exist")
+        else:
+            hashed_key = self.djb2(key)
+            idx = hashed_key % len(self.table)
+            self.table[idx] = None
 
 
     def get(self, key):
@@ -104,7 +143,11 @@ class HashTable:
         Implement this.
         """
         # Your code here
+        hashed_key = self.djb2(key)
+        idx = hashed_key % len(self.table)
+        value = self.table[idx]
 
+        return value
 
     def resize(self, new_capacity):
         """
@@ -114,7 +157,7 @@ class HashTable:
         Implement this.
         """
         # Your code here
-
+        pass
 
 
 if __name__ == "__main__":
